@@ -26,28 +26,28 @@ export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [checking, setChecking] = useState(true);
 
-  useEffect(() => {
-    const current = getCurrentUser();
-    if (!current) {
-      router.replace("/login");
-      return;
-    }
-    setUser(current);
-    setChecking(false);
-  }, [router]);
+  // useEffect(() => {
+  //   const current = getCurrentUser();
+  //   if (!current) {
+  //     router.replace("/login");
+  //     return;
+  //   }
+  //   setUser(current);
+  //   setChecking(false);
+  // }, [router]);
 
-  function handleLogout() {
-    logout();
-    router.replace("/login");
-  }
+  // function handleLogout() {
+  //   logout();
+  //   router.replace("/login");
+  // }
 
-  if (checking) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <p className="text-sm text-muted-foreground">Checking session...</p>
-      </div>
-    );
-  }
+  // if (checking) {
+  //   return (
+  //     <div className="flex min-h-screen items-center justify-center bg-background">
+  //       <p className="text-sm text-muted-foreground">Checking session...</p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <SidebarProvider>
@@ -76,9 +76,9 @@ export default function DashboardPage() {
             <span>
               Signed in as <span className="font-medium">{user?.email}</span>
             </span>
-            <Button variant="outline" size="sm" onClick={handleLogout}>
+            {/* <Button variant="outline" size="sm" onClick={handleLogout}>
               Logout
-            </Button>
+            </Button> */}
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">

@@ -1,24 +1,26 @@
+import axios from "axios";
+
 export type User = {
   email: string;
 };
 
-const DUMMY_EMAIL = "test@example.com";
-const DUMMY_PASSWORD = "Abcd1234@Aceg";
 const STORAGE_KEY = "dev-leveling-auth-user";
+
+const API_URL = "http://localhost:5000/api/";
 
 function isBrowser() {
   return typeof window !== "undefined";
 }
 
-export function login(email: string, password: string): User | null {
-  if (email === DUMMY_EMAIL && password === DUMMY_PASSWORD) {
-    const user: User = { email };
-    if (isBrowser()) {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-    }
-    return user;
+export async function login(path: string, data: object) {
+  try {
+    const res = await axios.post(API_URL + path, data);
+    console.log(res);
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
   }
-  return null;
 }
 
 export function logout() {

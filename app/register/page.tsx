@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -28,8 +28,14 @@ export default function RegisterPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password, confirmPassword }),
+        body: JSON.stringify({ username, password, confirmPassword }),
       });
+
+      if (response) {
+        console.log("User registered successfully");
+      } else {
+        console.log("Registration failed");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -47,13 +53,13 @@ export default function RegisterPage() {
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="username">Username</Label>
               <Input
-                id="email"
-                type="email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="username"
+                type="text"
+                autoComplete="off"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
               />
             </div>

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-
 import { login, getCurrentUser } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +17,7 @@ import { Label } from "@/components/ui/label";
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -37,15 +36,23 @@ export default function LoginPage() {
     setError(null);
     setLoading(true);
 
-    const user = login(email, password);
-    setLoading(false);
+    const data = {
+      username: username,
+      password: password,
+    };
 
-    if (!user) {
-      setError("Invalid credentials. Try test@example.com / password123.");
-      return;
+    try {
+      const response = await login("login", data);
+
+      if (response) {
+        console.log("Correct response", response);
+        router.push("/dashboard");
+      } else {
+        console.log("Response is not working! Something went wrong!", response);
+      }
+    } catch (error) {
+      console.log("Error", error);
     }
-
-    router.replace("/dashboard");
   }
 
   return (
@@ -53,20 +60,17 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Login</CardTitle>
-          <CardDescription>
-            Use the dummy credentials to access the dashboard.
-          </CardDescription>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="username">Username</Label>
               <Input
-                id="email"
-                type="email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="username"
+                type="text"
+                autoComplete="off"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
               />
             </div>
@@ -85,21 +89,25 @@ export default function LoginPage() {
               <p className="text-sm text-muted-foreground">{message}</p>
             )}
             {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full cursor-pointer"
+              disabled={loading}
+            >
               {loading ? "Logging in..." : "Login"}
             </Button>
           </form>
           <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground">
             <button
               type="button"
-              className="text-left underline underline-offset-4"
+              className="text-left underline underline-offset-4 cursor-pointer"
               onClick={() => router.push("/register")}
             >
               Need an account? Register
             </button>
             <button
               type="button"
-              className="text-left underline underline-offset-4"
+              className="text-left underline underline-offset-4 cursor-pointer"
               onClick={() => router.push("/forgot-password")}
             >
               Forgot your password?
