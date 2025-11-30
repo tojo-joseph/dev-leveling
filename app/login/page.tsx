@@ -42,10 +42,11 @@ export default function LoginPage() {
     };
 
     try {
-      const response = await login("login", data);
+      const response: any = await login("login", data);
 
       if (response) {
         console.log("Correct response", response);
+        localStorage.setItem("accessToken", response.accessToken);
         router.push("/dashboard");
       } else {
         console.log("Response is not working! Something went wrong!", response);

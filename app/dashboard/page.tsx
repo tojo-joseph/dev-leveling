@@ -26,6 +26,21 @@ export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [checking, setChecking] = useState(true);
 
+  const handleLogout = async () => {
+    try {
+      const response = await logout("logout", {});
+
+      if (response) {
+        console.log(response);
+        router.push("/");
+      } else {
+        console.log("Something went wrong while logging out!");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // useEffect(() => {
   //   const current = getCurrentUser();
   //   if (!current) {
@@ -76,9 +91,9 @@ export default function DashboardPage() {
             <span>
               Signed in as <span className="font-medium">{user?.email}</span>
             </span>
-            {/* <Button variant="outline" size="sm" onClick={handleLogout}>
+            <Button variant="outline" size="sm" onClick={handleLogout}>
               Logout
-            </Button> */}
+            </Button>
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">

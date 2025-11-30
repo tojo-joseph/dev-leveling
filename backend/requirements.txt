@@ -2,3 +2,5 @@ Flask
 Flask-Session
 requests
 Flask-Cors
+python-dotenv
+pyjwt

@@ -1,6 +1,16 @@
-import Image from "next/image";
+"use client";
+
 import LoginPage from "./login/page";
+import { useEffect, useState } from "react";
+import DashboardPage from "./dashboard/page";
 
 export default function Home() {
-  return <LoginPage />;
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    setAccessToken(token);
+  }, []);
+
+  return accessToken !== null ? <DashboardPage /> : <LoginPage />;
 }

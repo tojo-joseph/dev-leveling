@@ -1,6 +1,12 @@
 from flask import Blueprint, request, jsonify, session, g
 from werkzeug.security import check_password_hash
 from database import close, connect
+from dotenv import load_dotenv
+import os
+import jwt
+import datetime
+
+load_dotenv()
 
 login_bp = Blueprint("login", __name__)
 
@@ -21,5 +27,16 @@ def login():
         return "Invalid username and/or password"
     
     session["user_id"] = rows[0][0]
+    accessToken = generate_token(session["user_id"])
     close()
-    return jsonify({"ok": True})
+    return jsonify({"ok": True, "accessToken": accessToken})
+
+
+def generate_token(user_id):
+    payload = {
+        'user_id': user_id,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+    }
+    secret_key = os.environ.get('SECRET_KEY')
+    token = jwt.encode(payload, secret_key, algorithm='HS256')
+    return token

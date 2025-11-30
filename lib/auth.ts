@@ -23,9 +23,20 @@ export async function login(path: string, data: object) {
   }
 }
 
-export function logout() {
-  if (!isBrowser()) return;
-  window.localStorage.removeItem(STORAGE_KEY);
+export async function logout(path: string, data: object) {
+  const accessToken = localStorage.getItem("accessToken");
+  const headers = { Authorization: accessToken };
+  const options = { headers: headers };
+
+  try {
+    const res = await axios.post(API_URL + path, data, options);
+    console.log(res);
+    localStorage.removeItem("accessToken");
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
 }
 
 export function getCurrentUser(): User | null {
