@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { login, getCurrentUser } from "@/lib/auth";
+import { login } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,12 +22,12 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const user = getCurrentUser();
-    if (user) {
-      router.replace("/dashboard");
-    }
-  }, [router]);
+  // useEffect(() => {
+  //   const user = getCurrentUser();
+  //   if (user) {
+  //     router.replace("/dashboard");
+  //   }
+  // }, [router]);
 
   const message = searchParams.get("message");
 
@@ -44,9 +44,8 @@ export default function LoginPage() {
     try {
       const response: any = await login("login", data);
 
-      if (response) {
+      if (response?.ok) {
         console.log("Correct response", response);
-        localStorage.setItem("accessToken", response.accessToken);
         router.push("/dashboard");
       } else {
         console.log("Response is not working! Something went wrong!", response);

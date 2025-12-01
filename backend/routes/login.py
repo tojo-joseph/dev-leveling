@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, session, g
+from flask import Blueprint, make_response, request, jsonify, session, g
 from werkzeug.security import check_password_hash
 from database import close, connect
 from dotenv import load_dotenv
@@ -29,7 +29,9 @@ def login():
     session["user_id"] = rows[0][0]
     accessToken = generate_token(session["user_id"])
     close()
-    return jsonify({"ok": True, "accessToken": accessToken})
+    res = make_response(jsonify({"ok": True, "accessToken": accessToken}))
+    res.set_cookie("accessToken", accessToken, httponly=True, secure=False, samesite="Lax", max_age=1000 * 60 * 60 * 24, path="/")
+    return res
 
 
 def generate_token(user_id):

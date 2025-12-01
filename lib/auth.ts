@@ -14,9 +14,11 @@ function isBrowser() {
 
 export async function login(path: string, data: object) {
   try {
-    const res = await axios.post(API_URL + path, data);
+    const res = await axios.post(API_URL + path, data, {
+      withCredentials: true,
+    });
     console.log(res);
-    return true;
+    return res.data;
   } catch (err) {
     console.log(err);
     return false;
@@ -24,14 +26,11 @@ export async function login(path: string, data: object) {
 }
 
 export async function logout(path: string, data: object) {
-  const accessToken = localStorage.getItem("accessToken");
-  const headers = { Authorization: accessToken };
-  const options = { headers: headers };
+  const options = { withCredentials: true };
 
   try {
     const res = await axios.post(API_URL + path, data, options);
     console.log(res);
-    localStorage.removeItem("accessToken");
     return true;
   } catch (err) {
     console.log(err);
@@ -39,13 +38,13 @@ export async function logout(path: string, data: object) {
   }
 }
 
-export function getCurrentUser(): User | null {
-  if (!isBrowser()) return null;
-  const raw = window.localStorage.getItem(STORAGE_KEY);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as User;
-  } catch {
-    return null;
-  }
-}
+// export function getCurrentUser(): User | null {
+//   if (!isBrowser()) return null;
+//   const raw = window.localStorage.getItem(STORAGE_KEY);
+//   if (!raw) return null;
+//   try {
+//     return JSON.parse(raw) as User;
+//   } catch {
+//     return null;
+//   }
+// }

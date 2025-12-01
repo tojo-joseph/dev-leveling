@@ -19,7 +19,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { getCurrentUser, logout, type User } from "@/lib/auth";
+import { logout, type User } from "@/lib/auth";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function DashboardPage() {
 
       if (response) {
         console.log(response);
-        router.push("/");
+        router.push("/login");
       } else {
         console.log("Something went wrong while logging out!");
       }
