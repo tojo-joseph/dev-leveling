@@ -1,7 +1,9 @@
 from flask import Blueprint, request, make_response, jsonify, session, g
 from dotenv import load_dotenv
+from database import connect, close, save
 import os
 import requests
+
 
 load_dotenv()
 
@@ -12,6 +14,8 @@ gh_access_bp = Blueprint("ghaccess", __name__)
 
 @gh_access_bp.route("/ghaccess", methods=["GET"])
 def ghaccess():
+    connect()
+    session.clear()
     code = request.args.get("code")
     
 
@@ -30,22 +34,32 @@ def ghaccess():
     token_data= response.json()
     print("token_data", token_data)
 
-    username = token_data["access_token"]
+    token = token_data["access_token"]
 
-    rows = g.cursor.execute("SELECT * FROM users WHERE username = ?", (username, ))
-    rows = rows.fetchall()
+    if token:
+        user_data = get_github_user(token)
+        print('user_data', user_data)
 
-    if len(rows) == 0:
-        g.cursor.execute("INSERT INTO users (username, hash, oauth_provider) VALUES (?, ?, ?)", )
+        rows = g.cursor.execute("SELECT * FROM users WHERE username = ?", (user_data["login"], ))
+        rows = rows.fetchall()
 
-    session["user_id"] = rows[0][0]
+        if len(rows) == 0:
+            g.cursor.execute("INSERT INTO users (username, hash, oauth_provider) VALUES (?, ?, ?)", (user_data["login"], None, "github"))
+            user_id = g.cursor.lastrowid
+        else:
+            user_id = rows[0][0]
 
-    accessToken = token_data.get('access_token')
+        save()
 
-    res = make_response(jsonify({"ok": True, "accessToken": accessToken}))
-    res.set_cookie("accessToken", accessToken, httponly=True, secure=False, samesite="Lax", max_age=1000 * 60 * 60 * 24, path="/")
+        session["user_id"] = user_id
 
-    return token_data
+        res = make_response(jsonify({"ok": True, "accessToken": token, "user_data": user_data}))
+        res.set_cookie("accessToken", token, httponly=True, secure=False, samesite="Lax", max_age=1000 * 60 * 60 * 24, path="/")
+        close()
+        return res
+    else:
+        close()
+        return jsonify({"error": "Failed to obtain access token"}), 400
 
 gh_user_data_bp = Blueprint("gh_user_data_bp", __name__)
 
@@ -69,3 +83,12 @@ def get_user_data():
 # def ghlogin():
 #     connect()
 #     session.clear()
+
+
+def get_github_user(access_token: str):
+    resp = requests.get(
+        "https://api.github.com/user",
+        headers={"Authorization": f"token {access_token}"}
+    )
+    resp.raise_for_status()
+    return resp.json()
