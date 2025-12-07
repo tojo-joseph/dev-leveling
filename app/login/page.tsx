@@ -89,7 +89,7 @@ export default function LoginPage() {
       const response: any = await login("login", data);
 
       if (response?.ok) {
-        console.log("Correct response", response);
+        console.log("Correct response", response.json());
         router.push("/dashboard");
       } else {
         console.log("Response is not working! Something went wrong!", response);

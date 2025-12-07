@@ -41,29 +41,6 @@ export default function DashboardPage() {
     }
   };
 
-  // useEffect(() => {
-  //   const current = getCurrentUser();
-  //   if (!current) {
-  //     router.replace("/login");
-  //     return;
-  //   }
-  //   setUser(current);
-  //   setChecking(false);
-  // }, [router]);
-
-  // function handleLogout() {
-  //   logout();
-  //   router.replace("/login");
-  // }
-
-  // if (checking) {
-  //   return (
-  //     <div className="flex min-h-screen items-center justify-center bg-background">
-  //       <p className="text-sm text-muted-foreground">Checking session...</p>
-  //     </div>
-  //   );
-  // }
-
   return (
     <SidebarProvider>
       <AppSidebar />
