@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/store/slice";
 
 const CLIENT_ID = "Ov23liRnQWed4idU6Alr";
 // const codeParams = 8aa559b492ea24130201
@@ -32,6 +34,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const codeParams = searchParams.get("code");
@@ -52,7 +56,10 @@ export default function LoginPage() {
           console.log("Access Token Data:", data);
 
           // If successful, redirect to dashboard
-          if (data?.ok) {
+          if (data?.ok && data?.user_id) {
+            dispatch(
+              setUser({ user_id: data.user_id, userInfo: data.user_data })
+            );
             router.push("/dashboard");
           } else {
             setError("GitHub login failed");

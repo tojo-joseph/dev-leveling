@@ -48,12 +48,17 @@ def ghaccess():
             user_id = g.cursor.lastrowid
         else:
             user_id = rows[0][0]
+        
+        g.cursor.execute("""
+        UPDATE users
+        SET github_token = ? WHERE id = ?
+        """, (token, user_id))
 
         save()
 
         session["user_id"] = user_id
 
-        res = make_response(jsonify({"ok": True, "accessToken": token, "user_data": user_data}))
+        res = make_response(jsonify({"ok": True, "accessToken": token, "user_data": user_data, "user_id": user_id}))
         res.set_cookie("accessToken", token, httponly=True, secure=False, samesite="Lax", max_age=1000 * 60 * 60 * 24, path="/")
         close()
         return res

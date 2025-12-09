@@ -20,14 +20,21 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { logout, type User } from "@/lib/auth";
+import { RootState } from "@/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { clearUser } from "@/store/slice";
+import Image from "next/image";
 
 export default function DashboardPage() {
+  const user_id = useSelector((state: RootState) => state.user.user_id);
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const dispatch = useDispatch();
+  // const [user, setUser] = useState<User | null>(null);
   const [checking, setChecking] = useState(true);
 
   const handleLogout = async () => {
     try {
+      dispatch(clearUser());
       const response = await logout("logout", {});
 
       if (response) {
@@ -40,6 +47,9 @@ export default function DashboardPage() {
       console.log(error);
     }
   };
+
+  const userInfo = useSelector((state: RootState) => state.user.userInfo);
+  console.log("userInfo", userInfo);
 
   return (
     <SidebarProvider>
@@ -65,9 +75,20 @@ export default function DashboardPage() {
             </Breadcrumb>
           </div>
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
-            <span>
-              Signed in as <span className="font-medium">{user?.email}</span>
-            </span>
+            {userInfo && (
+              <span>
+                Signed in as{" "}
+                <span className="font-medium">{userInfo?.login}</span>
+              </span>
+            )}
+            {userInfo && (
+              <Image
+                src={userInfo ? userInfo.avatar_url : ""}
+                alt="avatar"
+                width={40}
+                height={40}
+              />
+            )}
             <Button variant="outline" size="sm" onClick={handleLogout}>
               Logout
             </Button>
