@@ -4,7 +4,7 @@ from flask_session import Session
 from routes.register import register_bp
 from routes.login import login_bp
 from routes.logout import logout_bp
-from routes.gh_login import gh_access_bp, gh_user_data_bp
+from routes.gh_login import gh_access_bp, gh_user_data_bp, gh_commit_bp
 
 
 
@@ -20,7 +20,8 @@ app.register_blueprint(register_bp, url_prefix="/api")
 app.register_blueprint(login_bp, url_prefix="/api")
 app.register_blueprint(logout_bp, url_prefix="/api")
 app.register_blueprint(gh_access_bp)
-app.register_blueprint(gh_user_data_bp)
+app.register_blueprint(gh_user_data_bp, url_prefix="/api")
+app.register_blueprint(gh_commit_bp, url_prefix="/api")
 
 if __name__ == "__main__":
     app.run(debug=True)

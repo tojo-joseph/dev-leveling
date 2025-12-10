@@ -22,13 +22,21 @@ import {
 import { logout, type User } from "@/lib/auth";
 import { RootState } from "@/store/store";
 import { useDispatch, useSelector } from "react-redux";
-import { clearUser } from "@/store/slice";
+import { clearUser, setUser } from "@/store/slice";
 import Image from "next/image";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { CommitActivity } from "@/components/commit-activity";
+
+interface CommitData {
+  date: string;
+  count: number;
+}
 
 export default function DashboardPage() {
   const user_id = useSelector((state: RootState) => state.user.user_id);
   const router = useRouter();
   const dispatch = useDispatch();
+  const [commitData, setCommitData] = useState<any[]>([]);
   // const [user, setUser] = useState<User | null>(null);
   const [checking, setChecking] = useState(true);
 
@@ -48,8 +56,58 @@ export default function DashboardPage() {
     }
   };
 
+  useEffect(() => {
+    getUserData();
+    getCommitActivity();
+  }, []);
+
+  const getCommitActivity = async () => {
+    try {
+      const response: any = await fetch(
+        "http://localhost:5000/api/get_commit_activity",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.ok && data.commit_activity) {
+        // Transform the data into the format expected by react-calendar-heatmap
+        const formattedData = Object.entries(data.commit_activity).map(
+          ([date, count]) => ({
+            date,
+            count: count as number,
+          })
+        );
+        console.log("Formatted Data:", formattedData); // Log the final formatted data
+        setCommitData(formattedData);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getUserData = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/get_user_data", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (response) {
+        console.log("userDataResponse", response);
+        dispatch(setUser({ user_id: data.user_id, userInfo: data.user_data }));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const userInfo = useSelector((state: RootState) => state.user.userInfo);
-  console.log("userInfo", userInfo);
 
   return (
     <SidebarProvider>
@@ -82,12 +140,10 @@ export default function DashboardPage() {
               </span>
             )}
             {userInfo && (
-              <Image
-                src={userInfo ? userInfo.avatar_url : ""}
-                alt="avatar"
-                width={40}
-                height={40}
-              />
+              <Avatar>
+                <AvatarImage src={userInfo ? userInfo.avatar_url : ""} />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
             )}
             <Button variant="outline" size="sm" onClick={handleLogout}>
               Logout
@@ -101,12 +157,10 @@ export default function DashboardPage() {
             <div className="bg-muted/50 aspect-video rounded-xl" />
           </div>
           <div className="bg-muted/50 flex flex-1 flex-col rounded-xl p-6 md:min-h-min">
-            <h1 className="text-xl font-semibold tracking-tight">Welcome</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              This dashboard is using the shadcn sidebar-07 layout with dummy
-              authentication. Replace this content with your real application
-              widgets.
-            </p>
+            <h1 className="text-xl font-semibold tracking-tight">
+              Github Commits
+            </h1>
+            <CommitActivity commitData={commitData} />
           </div>
         </div>
       </SidebarInset>

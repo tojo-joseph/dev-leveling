@@ -120,3 +120,55 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Heatmap colors similar to GitHub */
+/* Update your globals.css with these styles */
+:root {
+  --color-calendar-graph-day-bg: #ebedf0;
+  --color-calendar-graph-day-L1-bg: #9be9a8;
+  --color-calendar-graph-day-L2-bg: #40c463;
+  --color-calendar-graph-day-L3-bg: #30a14e;
+  --color-calendar-graph-day-L4-bg: #216e39;
+}
+
+/* Base style for all heatmap squares */
+.react-calendar-heatmap rect {
+  rx: 2;
+  ry: 2;
+}
+
+/* Empty state */
+.react-calendar-heatmap .color-empty {
+  fill: #ebedf0;
+}
+
+/* Color scale */
+.react-calendar-heatmap .color-github-0 {
+  fill: #ebedf0;
+}
+.react-calendar-heatmap .color-github-1 {
+  fill: #9be9a8 !important;
+}
+.react-calendar-heatmap .color-github-2 {
+  fill: #40c463;
+}
+.react-calendar-heatmap .color-github-3 {
+  fill: #30a14e;
+}
+.react-calendar-heatmap .color-github-4 {
+  fill: #216e39;
+}
+
+/* For tooltips */
+.react-calendar-heatmap .color-scale-1 {
+  fill: #d6e685;
+}
+.react-calendar-heatmap .color-scale-2 {
+  fill: #8cc665;
+}
+.react-calendar-heatmap .color-scale-3 {
+  fill: #44a340;
+}
+.react-calendar-heatmap .color-scale-4 {
+  fill: #1e6823;
+}
